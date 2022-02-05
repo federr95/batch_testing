@@ -25,7 +25,7 @@ public class ReadFromFileSystemConfigTest {
     public void readFromFileSystem() {
         this.readFromFileSystem.readFile(evidenceRepository);
         long evidenceTotal = 3000;
-        assertEquals(evidenceRepository.findAll().stream().count(), evidenceTotal);
+        assertEquals(evidenceRepository.findAll().size(), evidenceTotal);
     }
 
 }
