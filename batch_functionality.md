@@ -96,7 +96,7 @@ Per il controllo dell’effettivo inserimento dei dati si può accedere alla con
 
 <h4>Avvio tramite annotazioni</h4>
 Il processo che porta all'esecuzione del job e degli step annessi viene innescato dalle seguenti due annotazioni`@Configuration`
-e `@EnableBatchProcessing`. La prima ha il compito di dichiarare a Spring che all'interno della classe annotata si trovano
+e `@EnableBatchProcessing` poste all'interno del file `BatchChunkConfig.java`. La prima ha il compito di dichiarare a Spring che all'interno della classe annotata si trovano
 più bean. La seconda genera la configurazione per far partire il processo Batch. 
 
 <h4>Avvio tramite la classe di test "BatchChunkConfigTest.java"</h4>
