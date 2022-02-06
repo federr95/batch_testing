@@ -31,4 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/
+
+/src/main/resources/big_test_file/

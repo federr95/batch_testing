@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<form method="POST" th:action="@{/upload-csv-file}" enctype="multipart/form-data">
+    <div class="form-group mt-3">
+        <label for="file">Select a CSV file</label>
+        <input type="file" name="file" class="form-control-file" id="file" accept=".csv">
+    </div>
+    <button type="submit" class="btn btn-primary">Import CSV</button>
+</form>
+</html>
