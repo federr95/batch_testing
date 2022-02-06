@@ -1,13 +1,13 @@
-package com.example.uploadCSVtoH2.read_from_filesystem_config;
+package com.example.uploadCSVtoH2.simple_read_config;
 
-import com.example.uploadCSVtoH2.read_from_filesystem.ReadFromFileSystem;
+import com.example.uploadCSVtoH2.simple_read.SimpleRead;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-public class ReadFromFileSystemConfig {
+public class SimpleReadConfig {
 
     @Bean
     public DataSource getDataSource() {
@@ -21,9 +21,9 @@ public class ReadFromFileSystemConfig {
     }
 
     @Bean
-    public ReadFromFileSystem readFromFileSystem(){
+    public SimpleRead simpleRead(){
         System.out.println("creation of ReadFromFileSystem instance");
-        return new ReadFromFileSystem("src/main/resources/MOCK_DATA2.csv");
+        return new SimpleRead("src/main/resources/MOCK_DATA2.csv");
     }
 
 }

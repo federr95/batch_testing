@@ -1,25 +1,17 @@
-package com.example.uploadCSVtoH2.read_from_filesystem;
+package com.example.uploadCSVtoH2.simple_read;
 
 import com.example.uploadCSVtoH2.entity.Evidence;
 import com.example.uploadCSVtoH2.repository.EvidenceRepository;
-import com.example.uploadCSVtoH2.service.EvidenceService;
 import lombok.Data;
-import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Data
-public class ReadFromFileSystem {
+public class SimpleRead {
 
     private long startTime;
     private long finishTime;
@@ -29,13 +21,14 @@ public class ReadFromFileSystem {
     @Autowired
     DataSource dataSource;
 
-    public ReadFromFileSystem(String fileName){
+    public SimpleRead(String fileName){
         this.fileName = fileName;
     }
 
     public void readFile(EvidenceRepository evidenceRepository) {
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            System.out.println("Simple Reading of: " + fileName);
             String line;
             int counter = 0;
             startTime = System.currentTimeMillis();
@@ -45,12 +38,10 @@ public class ReadFromFileSystem {
                     String[] arrayList = line.split(",");
                     Evidence evidence = new Evidence(Integer.parseInt(arrayList[0]), arrayList[1], arrayList[2],
                             arrayList[3], arrayList[4], arrayList[5]);
-                    //System.out.println("Evidence parameters: " + evidence.first_name + " " + evidence.last_name);
                     evidenceRepository.save(evidence);
                 }
                 counter++;
             }
-            //System.out.println("Evidence read: " + counter);
             finishTime = System.currentTimeMillis();
             System.out.println("reading starts at - " + finishTime + " milliseconds");
             elapsedTime = (finishTime - startTime) / 1000;
