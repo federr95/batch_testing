@@ -178,7 +178,7 @@ l'istanza della classe `SimpleRead.java`, tramite il costruttore a cui viene pas
 <h4>Avvio tramite la classe "UploadCsVtoH2Application.java" </h4>
 All'interno della classe di start-up di spring vi sono il metodo statico `main()` il quale innesca il processo di creazione 
 dei vari bean contenuti all'interno dei differenti packages (controller, entity, repository e service).<br> 
-Poi vi è variabile `simpleRead` annotata con `@Autowired` si "lega" all'istanza creata tramite l'annotazione `@Bean` all'interno 
+Poi vi è variabile `simpleRead` annotata con `@Autowired` che si "lega" all'istanza creata tramite l'annotazione `@Bean` all'interno 
 della classe `SimpleRead.java`; infine il secondo metodo `run()` (la cui classe CommandLineRunner fa si che
 il bean dovrebbe essere lanciato dentro un'applicazione Spring) chiama il metodo `readFile()` passandogli `evidenceRepository`.
 Ciò permette di sfruttare i metodi di JpaRepository per salvare i record letti. <br>
