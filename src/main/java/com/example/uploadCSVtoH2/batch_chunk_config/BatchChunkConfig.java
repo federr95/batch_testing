@@ -2,7 +2,6 @@ package com.example.uploadCSVtoH2.batch_chunk_config;
 
 import javax.sql.DataSource;
 
-
 import com.example.uploadCSVtoH2.entity.Evidence;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -17,10 +16,8 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -30,30 +27,18 @@ import org.springframework.core.io.ClassPathResource;
 public class BatchChunkConfig {
 
     @Autowired
+    public DataSource dataSource;
+
+    @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
 
-    //@Autowired
-    //private EntityManagerFactory emf;
-
     @Bean
     public JobLauncherTestUtils jobLauncherTestUtils() {
         return new JobLauncherTestUtils();
     }
-
-    public DataSource getDataSource() {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("org.h2.Driver");
-        dataSourceBuilder.url("jdbc:h2:mem:batchdb");
-        dataSourceBuilder.username("sa");
-        dataSourceBuilder.password("");
-        return dataSourceBuilder.build();
-    }
-
-
-
 
     @Bean
     public FlatFileItemReader<Evidence> evidenceItemReader() {
@@ -80,26 +65,17 @@ public class BatchChunkConfig {
         return new Processor();
     }
 
-    // itemWriter con JDBC
     @Bean
     public JdbcBatchItemWriter<Evidence> evidenceItemWriter() {
         return new JdbcBatchItemWriterBuilder<Evidence>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO evidence (id, first_name, last_name, email, gender, ip_address) VALUES (:id, :first_name, :last_name, :email, :gender, :ip_address)")
-                .dataSource(getDataSource())
+                .dataSource(dataSource)
                 .build();
     }
 
-    // itemWriter con JPA
-    /*@Bean
-    public JpaItemWriter<Evidence> evidenceItemWriter() {
-        JpaItemWriter<Evidence> writer = new JpaItemWriter();
-        writer.setEntityManagerFactory(emf);
-        return writer;
-    }*/
-
     @Bean
-    public Job loadEvidenceJob(Step step1) throws Exception {
+    public Job loadEvidenceJob(Step step1) {
         return jobBuilderFactory.get("loadEvidenceJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(new JobResultListener())

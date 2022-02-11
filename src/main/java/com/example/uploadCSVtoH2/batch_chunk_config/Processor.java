@@ -6,9 +6,9 @@ import org.springframework.batch.item.ItemProcessor;
 public class Processor implements ItemProcessor<Evidence, Evidence> {
 
     public Evidence process(Evidence evidence) throws Exception {
-        //evidence.setField1(evidence.getField1().toUpperCase());
-        //evidence.setField2(evidence.getField2().toUpperCase());
-        //System.out.println(evidence.getId());
+        /*
+            code to add if we want to modify fields before insert into the table
+         */
         return evidence;
     }
 }
