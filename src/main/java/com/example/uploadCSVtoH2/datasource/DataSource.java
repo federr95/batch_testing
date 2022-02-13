@@ -9,12 +9,12 @@ public class DataSource {
 
     @Bean
     public javax.sql.DataSource getDataSource() {
-        System.out.println("creation of DataSource instance");
+
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.h2.Driver");
         dataSourceBuilder.url("jdbc:h2:mem:batchdb");
-        dataSourceBuilder.username("sa");
-        dataSourceBuilder.password("");
+        dataSourceBuilder.username("admin");
+        dataSourceBuilder.password("root");
         return dataSourceBuilder.build();
     }
 

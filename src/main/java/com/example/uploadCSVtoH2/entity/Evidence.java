@@ -1,13 +1,10 @@
 package com.example.uploadCSVtoH2.entity;
 
-import com.opencsv.bean.CsvBindByName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Data
 @Entity

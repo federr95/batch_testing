@@ -16,15 +16,15 @@ public class JobResultListener implements JobExecutionListener {
 
     public void beforeJob(JobExecution jobExecution) {
         startTime = System.currentTimeMillis();
-        System.out.println("job started at      - " + startTime + " milliseconds");
+        System.out.println("job started at:         -     " + startTime + " milliseconds");
     }
 
     public void afterJob(JobExecution jobExecution) {
         if (jobExecution.getStatus() == BatchStatus.COMPLETED ) {
             finishTime = System.currentTimeMillis();
             effectiveTime = (finishTime - startTime)/1000;
-            System.out.println("job finish at       - " + finishTime + " milliseconds");
-            System.out.println("job execution time  - " + effectiveTime + " seconds");
+            System.out.println("job finish at:          -     " + finishTime + " milliseconds");
+            System.out.println("job execution lasted:   -     " + effectiveTime + " seconds");
             //job success
         }
         else {

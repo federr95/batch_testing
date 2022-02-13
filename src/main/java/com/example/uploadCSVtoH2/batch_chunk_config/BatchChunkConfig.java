@@ -3,6 +3,7 @@ package com.example.uploadCSVtoH2.batch_chunk_config;
 import javax.sql.DataSource;
 
 import com.example.uploadCSVtoH2.entity.Evidence;
+import com.example.uploadCSVtoH2.entity.EvidenceEncrypted;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+
+import java.util.function.Function;
 
 @Configuration
 @EnableBatchProcessing
@@ -61,13 +64,13 @@ public class BatchChunkConfig {
     }
 
     @Bean
-    public ItemProcessor<Evidence, Evidence> evidenceItemProcessor() {
+    public ItemProcessor<Evidence, EvidenceEncrypted> evidenceItemProcessor() {
         return new Processor();
     }
 
     @Bean
-    public JdbcBatchItemWriter<Evidence> evidenceItemWriter() {
-        return new JdbcBatchItemWriterBuilder<Evidence>()
+    public JdbcBatchItemWriter<EvidenceEncrypted> evidenceItemWriter() {
+        return new JdbcBatchItemWriterBuilder<EvidenceEncrypted>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO evidence (id, first_name, last_name, email, gender, ip_address) VALUES (:id, :first_name, :last_name, :email, :gender, :ip_address)")
                 .dataSource(dataSource)
@@ -85,9 +88,9 @@ public class BatchChunkConfig {
     }
 
     @Bean
-    public Step step1(JdbcBatchItemWriter<Evidence> evidenceItemWriter) {
+    public Step step1(JdbcBatchItemWriter<EvidenceEncrypted> evidenceItemWriter) {
         return stepBuilderFactory.get("step1")
-                .<Evidence, Evidence>chunk(5)
+                .<Evidence, EvidenceEncrypted>chunk(5)
                 .reader(evidenceItemReader())
                 .processor(evidenceItemProcessor())
                 .writer(evidenceItemWriter)
