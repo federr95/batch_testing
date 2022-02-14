@@ -8,12 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Data
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvidenceEncrypted {
 
-    @Id
     public int id;
     public byte[] first_name;
     public byte[] last_name;
