@@ -20,12 +20,12 @@ public class JobResultListener implements JobExecutionListener {
     }
 
     public void afterJob(JobExecution jobExecution) {
-        if (jobExecution.getStatus() == BatchStatus.COMPLETED ) {
+        boolean completed = jobExecution.getStatus() == BatchStatus.COMPLETED;
+        if (completed) {
             finishTime = System.currentTimeMillis();
             effectiveTime = (finishTime - startTime)/1000;
             System.out.println("job finish at       - " + finishTime + " milliseconds");
             System.out.println("job execution time  - " + effectiveTime + " seconds");
-            //job success
         }
         else {
             jobExecution.getStatus();//job failure

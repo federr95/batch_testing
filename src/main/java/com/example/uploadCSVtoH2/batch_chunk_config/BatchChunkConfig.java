@@ -87,7 +87,7 @@ public class BatchChunkConfig {
     @Bean
     public Step step1(JdbcBatchItemWriter<Evidence> evidenceItemWriter) {
         return stepBuilderFactory.get("step1")
-                .<Evidence, Evidence>chunk(5) // aka commit interval ( see https://docs.spring.io/spring-batch/docs/current/reference/html/step.html#commitInterval )
+                .<Evidence, Evidence>chunk(100) // aka commit interval ( see https://docs.spring.io/spring-batch/docs/current/reference/html/step.html#commitInterval )
                 .reader(evidenceItemReader())
                 .processor(evidenceItemProcessor())
                 .writer(evidenceItemWriter)
