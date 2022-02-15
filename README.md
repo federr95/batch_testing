@@ -193,6 +193,10 @@ Per il controllo dell’effettivo inserimento dei dati si può accedere alla con
             .build();
     }`
 
+## Web Console
+
+- Pulire H2 database in memory: rimuovere `.h2.server.properties` nella home directory
+- [localhost:8081/h2-console](http://localhost:8081/h2-console)
 
 # Caricamento dati con plain text file
 
