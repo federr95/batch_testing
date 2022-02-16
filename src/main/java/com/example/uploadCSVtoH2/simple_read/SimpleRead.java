@@ -32,7 +32,7 @@ public class SimpleRead {
             String line;
             int counter = 0;
             startTime = System.currentTimeMillis();
-            System.out.println("reading starts at - " + startTime + " milliseconds");
+            System.out.println("reading starts at     - " + startTime + " milliseconds");
             while ((line = br.readLine()) != null) {
                 if (counter != 0) {
                     String[] arrayList = line.split(",");
@@ -43,9 +43,9 @@ public class SimpleRead {
                 counter++;
             }
             finishTime = System.currentTimeMillis();
-            System.out.println("reading starts at - " + finishTime + " milliseconds");
+            System.out.println("reading finish at     - " + finishTime + " milliseconds");
             elapsedTime = (finishTime - startTime) / 1000;
-            System.out.println("read execution lasted - " + elapsedTime + "seconds");
+            System.out.println("read execution lasted - " + elapsedTime + " seconds");
         } catch (
                 IOException e) {
             e.printStackTrace();

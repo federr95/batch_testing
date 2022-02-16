@@ -19,7 +19,7 @@ public class StepResultListener implements StepExecutionListener {
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
         //System.out.println("Called afterStep().");
-        System.out.println("step read           - " + stepExecution.getReadCount() + " line");
+        System.out.println("step read             - " + stepExecution.getReadCount() + " line");
         return stepExecution.getExitStatus();
     }
 }

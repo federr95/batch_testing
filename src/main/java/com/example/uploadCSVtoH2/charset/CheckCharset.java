@@ -15,8 +15,6 @@ public class CheckCharset {
     public String getCheckCharset(String fileName) throws IOException, UnsupportedCharsetException {
         String encoding;
 
-        //System.out.println("print inside getCheckCharacters '" + fileName + "'");
-
         byte[] buf = new byte[4096];
         java.io.InputStream fis = java.nio.file.Files.newInputStream(java.nio.file.Paths
                 .get(fileName));
@@ -27,9 +25,9 @@ public class CheckCharset {
         }
         detector.dataEnd();
         encoding = detector.getDetectedCharset();
-        System.out.println(encoding);
         if(!encoding.equals("US-ASCII")) throw
             new UnsupportedCharsetException("charset " + encoding + " is not supported");
+        System.out.println("charset detected      - " + encoding);
         return  encoding;
     }
 }
