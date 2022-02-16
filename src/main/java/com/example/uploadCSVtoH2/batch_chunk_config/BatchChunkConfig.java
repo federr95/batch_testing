@@ -2,6 +2,7 @@ package com.example.uploadCSVtoH2.batch_chunk_config;
 
 import javax.sql.DataSource;
 
+import com.example.uploadCSVtoH2.charset.CheckCharset;
 import com.example.uploadCSVtoH2.entity.Evidence;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -10,6 +11,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemStream;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
@@ -22,9 +24,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
+import java.nio.charset.UnsupportedCharsetException;
+
 @Configuration
 @EnableBatchProcessing
 public class BatchChunkConfig {
+
+    @Autowired
+    public CheckCharset checkCharset;
 
     @Autowired
     public DataSource dataSource;
@@ -43,8 +51,19 @@ public class BatchChunkConfig {
     @Bean
     public FlatFileItemReader<Evidence> evidenceItemReader() {
 
+        ClassPathResource classPathResource = new ClassPathResource("/big_test_file/fake_csv_1000000.csv");
+
+        try{
+            //ClassPathResource classPathResourceAbsolute = new ClassPathResource("/home/federico/Downloads/uploadCSVtoH2/src/main/resources/" + classPathResource.getPath());
+            //checkCharset.getCheckCharset(classPathResourceAbsolute.getPath());
+            checkCharset.getCheckCharset("/home/federico/Downloads/uploadCSVtoH2/src/main/resources/big_test_file/fake_csv_1000000.csv");
+            //checkCharset.getCheckCharset("/home/federico/Downloads/uploadCSVtoH2/src/main/resources/big_test_file/fake_csv_1000000(wrong_charset).csv");
+        } catch (UnsupportedCharsetException | IOException exception){
+            throw new RuntimeException();
+        }
+
         FlatFileItemReader<Evidence> reader = new FlatFileItemReader<>();
-        reader.setResource(new ClassPathResource("MOCK_DATA2.csv"));
+        reader.setResource(classPathResource);
         reader.setLinesToSkip(1);
 
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
@@ -87,10 +106,11 @@ public class BatchChunkConfig {
     @Bean
     public Step step1(JdbcBatchItemWriter<Evidence> evidenceItemWriter) {
         return stepBuilderFactory.get("step1")
-                .<Evidence, Evidence>chunk(5)
+                .<Evidence, Evidence>chunk(100)
                 .reader(evidenceItemReader())
                 .processor(evidenceItemProcessor())
                 .writer(evidenceItemWriter)
+                .listener(new StepResultListener())
                 .build();
     }
 

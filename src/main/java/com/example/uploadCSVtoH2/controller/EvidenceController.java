@@ -26,7 +26,7 @@ public class EvidenceController {
         long startTime;
         long finishTime;
         long elapsedTime;
-        String file = "src/main/resources/MOCK_DATA2.csv";
+        String file = "src/main/resources/fake_csv_3000.csv";
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             int counter = 0;

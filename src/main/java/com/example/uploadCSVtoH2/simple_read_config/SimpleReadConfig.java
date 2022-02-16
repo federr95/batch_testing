@@ -15,7 +15,7 @@ public class SimpleReadConfig {
     @Bean
     public SimpleRead simpleRead(){
         System.out.println("creation of ReadFromFileSystem instance");
-        return new SimpleRead("src/main/resources/MOCK_DATA2.csv");
+        return new SimpleRead("src/main/resources/big_test_file/fake_csv_1000000.csv");
     }
 
 }
