@@ -8,21 +8,24 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.io.IOException;
+
 @SpringBootApplication
 public class UploadCsVtoH2Application {
 
-	/*@Autowired
-	SimpleRead simpleRead;*/
+	@Autowired
+	SimpleRead simpleRead;
 
 	public static void main(String[] args) {
 		SpringApplication.run(UploadCsVtoH2Application.class, args);
 	}
 
-	/*@Bean
+	@Bean
 	public CommandLineRunner run(EvidenceRepository evidenceRepository) throws Exception {
 		return (String[] args) -> {
 			simpleRead.readFile(evidenceRepository);
 		};
-	}*/
+	}
 
 }
+

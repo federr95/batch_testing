@@ -2,32 +2,29 @@ package com.example.uploadCSVtoH2.batch_chunk_config;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @NoArgsConstructor
 @Data
 public class JobResultListener implements JobExecutionListener {
 
-    private long startTime;
-    private long finishTime;
-    private long effectiveTime;
-
     public void beforeJob(JobExecution jobExecution) {
-        startTime = System.currentTimeMillis();
-        System.out.println("job started at      - " + startTime + " milliseconds");
+        System.out.println("job started at      - " + jobExecution.getStartTime().getTime() + " milliseconds");
     }
 
     public void afterJob(JobExecution jobExecution) {
+
         boolean completed = jobExecution.getStatus() == BatchStatus.COMPLETED;
         if (completed) {
-            finishTime = System.currentTimeMillis();
-            effectiveTime = (finishTime - startTime)/1000;
-            System.out.println("job finish at       - " + finishTime + " milliseconds");
-            System.out.println("job execution time  - " + effectiveTime + " seconds");
-        }
-        else {
+          long jobDuration = (jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime())/1000;
+          System.out.println("job finish at       - " + jobExecution.getEndTime().getTime() + " milliseconds");
+          System.out.println("job execution time  - " + jobDuration + " seconds");
+        } else {
             jobExecution.getStatus();//job failure
         }
     }
