@@ -13,20 +13,18 @@ import java.util.List;
 @Data
 public class JobResultListener implements JobExecutionListener {
 
-    @Autowired
-    StepResultListener stepResultListener;
-
     public void beforeJob(JobExecution jobExecution) {
         System.out.println("job started at      - " + jobExecution.getStartTime().getTime() + " milliseconds");
     }
 
     public void afterJob(JobExecution jobExecution) {
-        long jobDuration = (jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime())/1000;
-        if (jobExecution.getStatus() == BatchStatus.COMPLETED ) {
-            System.out.println("job finish at       - " + jobExecution.getEndTime().getTime() + " milliseconds");
-            System.out.println("job execution time  - " + jobDuration + " seconds");
-        }
-        else {
+
+        boolean completed = jobExecution.getStatus() == BatchStatus.COMPLETED;
+        if (completed) {
+          long jobDuration = (jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime())/1000;
+          System.out.println("job finish at       - " + jobExecution.getEndTime().getTime() + " milliseconds");
+          System.out.println("job execution time  - " + jobDuration + " seconds");
+        } else {
             jobExecution.getStatus();//job failure
         }
     }
