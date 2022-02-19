@@ -13,8 +13,8 @@ public class DataSource {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.h2.Driver");
         dataSourceBuilder.url("jdbc:h2:mem:batchdb");
-        dataSourceBuilder.username("admin");
-        dataSourceBuilder.password("root");
+        dataSourceBuilder.username("sa");
+        dataSourceBuilder.password("");
         return dataSourceBuilder.build();
     }
 

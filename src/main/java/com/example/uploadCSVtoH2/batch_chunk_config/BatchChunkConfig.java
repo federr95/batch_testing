@@ -57,7 +57,7 @@ public class BatchChunkConfig {
         reader.setStrict(false);
         reader.setResource(resources);
 
-        reader.setLinesToSkip(1);
+        reader.setLinesToSkip(100);
 
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
         delimitedLineTokenizer.setNames("id", "first_name", "last_name", "email", "gender", "ip_address");

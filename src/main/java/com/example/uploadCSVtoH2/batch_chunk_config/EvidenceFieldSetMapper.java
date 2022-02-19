@@ -12,7 +12,7 @@ public class EvidenceFieldSetMapper implements FieldSetMapper<Evidence> {
     public Evidence mapFieldSet(FieldSet fieldSet) {
 
         final Evidence evidence = new Evidence();
-        evidence.setId(Integer.parseInt(fieldSet.readString("id")));
+        evidence.setId(Long.parseLong(fieldSet.readString("id")));
         evidence.setFirst_name(fieldSet.readString("first_name"));
         evidence.setLast_name(fieldSet.readString("last_name"));
         evidence.setEmail(fieldSet.readString("email"));
