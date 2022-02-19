@@ -3,13 +3,15 @@ package com.example.uploadCSVtoH2.batch_chunk_config;
 import javax.sql.DataSource;
 
 import com.example.uploadCSVtoH2.entity.Evidence;
-import com.example.uploadCSVtoH2.entity.EvidenceEncrypted;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -22,11 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
-import java.util.function.Function;
-
+//se metto @Configuration al posto di @Component, oltre alla creazione dei bean
+//viene lanciato anche il job (il jobLauncher viene creato automaticamente)
 @Configuration
-@EnableBatchProcessing
+//@EnableBatchProcessing
 public class BatchChunkConfig {
 
     @Autowired
@@ -45,9 +49,14 @@ public class BatchChunkConfig {
 
     @Bean
     public FlatFileItemReader<Evidence> evidenceItemReader() {
-
+        System.out.println("Creation a instance of evidenceItemReader");
         FlatFileItemReader<Evidence> reader = new FlatFileItemReader<>();
-        reader.setResource(new ClassPathResource("MOCK_DATA2.csv"));
+        Resource resources = new ClassPathResource("fake_csv_1000000_decrypted_version.csv");
+        if(!resources.isReadable() && !resources.exists())
+            System.out.println("errori");
+        reader.setStrict(false);
+        reader.setResource(resources);
+
         reader.setLinesToSkip(1);
 
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
@@ -64,13 +73,15 @@ public class BatchChunkConfig {
     }
 
     @Bean
-    public ItemProcessor<Evidence, EvidenceEncrypted> evidenceItemProcessor() {
+    public ItemProcessor<Evidence, Evidence> evidenceItemProcessor() {
+        System.out.println("Creation a instance of evidenceItemProcessor");
         return new Processor();
     }
 
     @Bean
-    public JdbcBatchItemWriter<EvidenceEncrypted> evidenceItemWriter() {
-        return new JdbcBatchItemWriterBuilder<EvidenceEncrypted>()
+    public JdbcBatchItemWriter<Evidence> evidenceItemWriter() {
+        System.out.println("Creation a instance of evidenceItemWriter");
+        return new JdbcBatchItemWriterBuilder<Evidence>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO evidence (id, first_name, last_name, email, gender, ip_address) VALUES (:id, :first_name, :last_name, :email, :gender, :ip_address)")
                 .dataSource(dataSource)
@@ -78,22 +89,24 @@ public class BatchChunkConfig {
     }
 
     @Bean
-    public Job loadEvidenceJob(Step step1) {
-        return jobBuilderFactory.get("loadEvidenceJob")
+    public Job loadEvidenceJob() {
+        System.out.println("Creation a instance of loadEvidenceJob");
+        return jobBuilderFactory
+                .get("loadEvidenceJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(new JobResultListener())
-                .flow(step1)
-                .end()
+                .start(step1())
                 .build();
     }
 
     @Bean
-    public Step step1(JdbcBatchItemWriter<EvidenceEncrypted> evidenceItemWriter) {
+    public Step step1() {
+        System.out.println("Creation a instance of step1");
         return stepBuilderFactory.get("step1")
-                .<Evidence, EvidenceEncrypted>chunk(5)
+                .<Evidence, Evidence>chunk(100)
                 .reader(evidenceItemReader())
                 .processor(evidenceItemProcessor())
-                .writer(evidenceItemWriter)
+                .writer(evidenceItemWriter())
                 .build();
     }
 
