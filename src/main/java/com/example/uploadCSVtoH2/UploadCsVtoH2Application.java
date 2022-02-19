@@ -50,7 +50,7 @@ public class UploadCsVtoH2Application {
 	public void decryption() throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, IOException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 
 		// creation of the key
-		CipherSuite cipherSuite = new CipherSuite("PASSWORD", "BD7DB131AB0F353C",
+		CipherSuite cipherSuite = new CipherSuite("TEST", "BD7DB131AB0F353C",
 				 "AES", 256);
 		System.out.println("Cyper Suite elements: ");
 		System.out.println("key       --> " + Base64.getEncoder().encodeToString(cipherSuite.getSecretKey().getEncoded()));
