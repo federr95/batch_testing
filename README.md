@@ -264,10 +264,10 @@ l'istanza del DB, andando a settare le principali caratteristiche (url, driver e
 l'istanza della classe `SimpleRead.java`, tramite il costruttore a cui viene passato il path assoluto.
 
 # Decifratura
-Al fine di testare la cifratura è stato inserito un package chiamato ciphersuite che contiene al suo interno la classe CipherSuite.java.
-All'interno di questa classe vi sono i parametri principali al fine della creazione di una chiave 
-asimmetrica utilizzata per la cifratura e decifratura. A secondo dell'algoritmo utilizzato vi saranno diversi tipi di parametri tra cui 
-il Sale e la Passphrase nel caso in cui si utilizzi una key derivation function (kdf). I vettore di inzializzazione utile per la cifratura.
+Al fine di testare la decifratura è stato inserito un package chiamato ciphersuite che contiene al suo interno la classe CipherSuite.java.
+All'interno di questa classe vi sono i parametri principali per la creazione di una chiave asimmetrica utilizzata per la cifratura e decifratura. 
+A secondo dell'algoritmo utilizzato vi saranno diversi tipi di parametri tra cui il Sale e la Passphrase nel caso in cui si utilizzi una key derivation 
+function (kdf). Il vettore di inzializzazione utile per la cifratura ed infine il tipo di algoritmo utilizzato e la dimensione della chiave.
 
 ```java
 public CipherSuite(String password, String salt, String symAlgorithm, Integer symKeySize) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -323,12 +323,12 @@ public static void decryptFile(String algorithm, SecretKey secretKey, IvParamete
     }
 ```
 La decifratura viene chiamata all'interno della classe UploadCsvtoH2Application.java. Dopo aver fatto la configurazione 
-della chiave (tramite la creazione della stessa classe) si chiama la funzione decryptFile() ed infine si va a lanciare il job 
+della chiave (tramite la creazione della stessa classe) si chiama poi la funzione decryptFile() ed infine si va a lanciare il job 
 per l'upload del file decifrato.
 
 ```java
 @Bean
-public void decryption() throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, IOException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+public void decryption() throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, IOException, 			BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, 	JobParametersInvalidException, JobRestartException {
 
 		// creation of the key
 		CipherSuite cipherSuite = new CipherSuite("TEST", "BD7DB131AB0F353C",
