@@ -1,7 +1,7 @@
-package com.example.uploadCSVtoH2.simple_read;
+/*package com.example.uploadCSVtoH2.simple_read;
 
-import com.example.uploadCSVtoH2.entity.Evidence;
-import com.example.uploadCSVtoH2.repository.EvidenceRepository;
+import com.example.uploadCSVtoH2.entity.User;
+import com.example.uploadCSVtoH2.repository.UserRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,12 +25,12 @@ public class SimpleRead {
         this.fileName = fileName;
     }
 
-    public void readFile(EvidenceRepository evidenceRepository) {
+    public void readFile(UserRepository userRepository) {
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 
             String line;
-            int counter = evidenceRepository.findAll().size();
+            int counter = userRepository.findAll().size();
             if(counter == 0)
                 System.out.println("simple reading of:      -     " + fileName);
             else System.out.println("file is already read by Batch process!\n" + "starts simple read of:  -     " + fileName);
@@ -38,11 +38,11 @@ public class SimpleRead {
             startTime = System.currentTimeMillis();
             System.out.println("reading starts at:      -     " + startTime + " milliseconds");
             while ((line = br.readLine()) != null) {
-                if (counter != evidenceRepository.findAll().size()) {
+                if (counter != userRepository.findAll().size()) {
                     String[] arrayList = line.split(",");
-                    Evidence evidence = new Evidence(Integer.parseInt(arrayList[0]), arrayList[1], arrayList[2],
+                    User user = new User(Integer.parseInt(arrayList[0]), arrayList[1], arrayList[2],
                             arrayList[3], arrayList[4], arrayList[5]);
-                    evidenceRepository.save(evidence);
+                    userRepository.save(user);
                 }
                 counter++;
             }
@@ -56,3 +56,4 @@ public class SimpleRead {
         }
     }
 }
+*/

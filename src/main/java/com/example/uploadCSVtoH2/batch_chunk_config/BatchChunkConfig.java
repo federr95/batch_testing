@@ -2,16 +2,13 @@ package com.example.uploadCSVtoH2.batch_chunk_config;
 
 import javax.sql.DataSource;
 
-import com.example.uploadCSVtoH2.entity.Evidence;
+import com.example.uploadCSVtoH2.entity.User;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -21,17 +18,19 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 //se metto @Configuration al posto di @Component, oltre alla creazione dei bean
 //viene lanciato anche il job (il jobLauncher viene creato automaticamente)
 @Configuration
 //@EnableBatchProcessing
 public class BatchChunkConfig {
+
+    private static final String OVERRIDDEN_BY_EXPRESSION = null;
 
     @Autowired
     public DataSource dataSource;
@@ -48,24 +47,45 @@ public class BatchChunkConfig {
     }
 
     @Bean
-    public FlatFileItemReader<Evidence> evidenceItemReader() {
-        System.out.println("Creation a instance of evidenceItemReader");
-        FlatFileItemReader<Evidence> reader = new FlatFileItemReader<>();
-        Resource resources = new ClassPathResource("fake_csv_1000000_decrypted_version.csv");
+    @StepScope
+    public FlatFileItemReader<User> itemReader(
+            @Value("#{jobParameters[fileName]}") String fileName) {
+        FlatFileItemReader<User> reader = new FlatFileItemReader<>();
+        String path = "decrypted_files/";
+        Resource resources = new ClassPathResource(path + fileName);
         if(!resources.isReadable() && !resources.exists())
             System.out.println("errori");
         reader.setStrict(false);
         reader.setResource(resources);
 
-        reader.setLinesToSkip(100);
+        reader.setLinesToSkip(1);
 
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
-        delimitedLineTokenizer.setNames("id", "first_name", "last_name", "email", "gender", "ip_address");
+        switch (fileName){
+            case "decreti.csv":
+                delimitedLineTokenizer.setNames("decreeId", "date", "evidenceNumber", "user");
+                break;
+            case "messaggi.csv":
+                delimitedLineTokenizer.setNames("messageId", "text", "sender", "receiver", "position");
+                break;
+            case "posizioni.csv":
+                delimitedLineTokenizer.setNames("positionId", "latitude", "longitude", "messages", "phoneCalls");
+                break;
+            case "telefonate.csv":
+                delimitedLineTokenizer.setNames("phoneCallId", "phoneCallReceiver", "phoneCallSender", "duration", "position");
+                break;
+            case "video.csv":
+                delimitedLineTokenizer.setNames("videoId", "duration", "position", "format");
+                break;
+            case "user.csv":
+                delimitedLineTokenizer.setNames("userId", "first_name", "last_name", "email", "gender", "ip_address");
+                break;
+        }
         delimitedLineTokenizer.setDelimiter(",");
 
         DefaultLineMapper defaultLineMapper = new DefaultLineMapper();
         defaultLineMapper.setLineTokenizer(delimitedLineTokenizer);
-        defaultLineMapper.setFieldSetMapper(new EvidenceFieldSetMapper());
+        defaultLineMapper.setFieldSetMapper(new UserFieldSetMapper());
 
         reader.setLineMapper(defaultLineMapper);
 
@@ -73,15 +93,13 @@ public class BatchChunkConfig {
     }
 
     @Bean
-    public ItemProcessor<Evidence, Evidence> evidenceItemProcessor() {
-        System.out.println("Creation a instance of evidenceItemProcessor");
+    public ItemProcessor<User, User> itemProcessor() {
         return new Processor();
     }
 
     @Bean
-    public JdbcBatchItemWriter<Evidence> evidenceItemWriter() {
-        System.out.println("Creation a instance of evidenceItemWriter");
-        return new JdbcBatchItemWriterBuilder<Evidence>()
+    public JdbcBatchItemWriter<User> itemWriter() {
+        return new JdbcBatchItemWriterBuilder<User>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO evidence (id, first_name, last_name, email, gender, ip_address) VALUES (:id, :first_name, :last_name, :email, :gender, :ip_address)")
                 .dataSource(dataSource)
@@ -89,24 +107,22 @@ public class BatchChunkConfig {
     }
 
     @Bean
-    public Job loadEvidenceJob() {
-        System.out.println("Creation a instance of loadEvidenceJob");
+    public Job job() {
         return jobBuilderFactory
-                .get("loadEvidenceJob")
+                .get("job")
                 .incrementer(new RunIdIncrementer())
                 .listener(new JobResultListener())
-                .start(step1())
+                .start(step())
                 .build();
     }
 
     @Bean
-    public Step step1() {
-        System.out.println("Creation a instance of step1");
+    public Step step() {
         return stepBuilderFactory.get("step1")
-                .<Evidence, Evidence>chunk(100)
-                .reader(evidenceItemReader())
-                .processor(evidenceItemProcessor())
-                .writer(evidenceItemWriter())
+                .<User, User>chunk(100)
+                .reader(itemReader(OVERRIDDEN_BY_EXPRESSION))
+                .processor(itemProcessor())
+                .writer(itemWriter())
                 .build();
     }
 

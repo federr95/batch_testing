@@ -54,7 +54,7 @@ public class UploadCsVtoH2Application {
 	BatchChunkConfig batchChunkConfig;
 
 	@Autowired
-	Job loadEvidenceJob;
+	Job job;
 
 	@Autowired
 	JobLauncher jobLauncher;
@@ -74,7 +74,7 @@ public class UploadCsVtoH2Application {
 
 	// ENCRYPTION this fase could be exploited in the archive part (la classe resources legge direttamente dalle risorse
 	// mentre quando si crea un nuovo file bisogna dare il path a partire da src !?
-	/*@Bean
+	// add @Bean to start encryption
 	public void encryptionFolder() throws IOException {
 		String secret = "PASSWORD";
 		List<File> filesInFolder = Files.walk(Paths.get("C:/Users/feder/Downloads/batch_testing_v0.2/src/main/resources/files_to_be_encrypted"))
@@ -105,11 +105,11 @@ public class UploadCsVtoH2Application {
 			}
 		}
 
-	}*/
+	}
 
 	// DECRYPTION
 	@Bean
-	public void decryptionFolder() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+	public void decryptionFolder() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 
 		String secret = "";
 		boolean check = false;
@@ -133,19 +133,13 @@ public class UploadCsVtoH2Application {
 				.map(x -> x.toFile())
 				.filter(x -> x.getName().endsWith(".encrypted"))
 				.collect(Collectors.toList());
-		int count = 0;
 		for(File file : filesInFolder){
 			try {
 				String path = "encrypted_files/";
 				String path2 = "src/main/resources/decrypted_files/";
 				String tmp = path2 + file.getName();
-				// capire perchè non andasse
-				//String decryptedFileName= tmp.split(".")[0];
 				String[] tmp2 = tmp.split("\\.");
-				//for(String string : tmp2)
-				//	System.out.println(string);
 				String decryptedFileName = tmp2[0] + "." + tmp2[1];
-				//System.out.println(decryptedFileName);
 				String encryptedFileName = path + file.getName();
 				Resource resource = new ClassPathResource(encryptedFileName);
 				File encryptedFile = resource.getFile();
@@ -157,7 +151,6 @@ public class UploadCsVtoH2Application {
 				inputStream.close();
 				outputStream.close();
 				System.out.println("file " + file.getName() + " has been decrypted!");
-				count++;
 			} catch (IllegalBlockSizeException | BadPaddingException | IOException | InvalidAlgorithmParameterException
 				| InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException exception) {
 				throw new IncorrectPasswordException();
@@ -166,9 +159,14 @@ public class UploadCsVtoH2Application {
 
 		System.out.println("decryption is terminate..." + "\nstart to load elements into H2");
 
-		//JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
-		//		.toJobParameters();
-		//jobLauncher.run(loadEvidenceJob, jobParameters);
+		/*for(File file : filesInFolder ){
+			JobParameters jobParameters = new JobParametersBuilder()
+					.addLong("time", System.currentTimeMillis())
+					.addString("fileName", file.getName())
+					.toJobParameters();
+			jobLauncher.run(job, jobParameters);
+		}*/
+
 	}
 
 

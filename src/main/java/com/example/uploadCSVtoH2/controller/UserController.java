@@ -1,26 +1,25 @@
 package com.example.uploadCSVtoH2.controller;
 
-import com.example.uploadCSVtoH2.entity.Evidence;
-import com.example.uploadCSVtoH2.service.EvidenceService;
+import com.example.uploadCSVtoH2.entity.User;
+import com.example.uploadCSVtoH2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
 import java.util.List;
 
 @Controller
-public class EvidenceController {
+public class UserController {
 
     @Autowired
-    EvidenceService evidenceService;
+    UserService userService;
 
     @GetMapping("/")
     public String getIndex(){
         return "index";
     }
 
-    @GetMapping("/load-from-fileSystem")
+    /*@GetMapping("/load-from-fileSystem")
     @ResponseBody
     public void startOperation(){
         long startTime;
@@ -35,9 +34,9 @@ public class EvidenceController {
             while ((line = br.readLine()) != null) {
                 if(counter != 0) {
                     String[] arrayList = line.split(",");
-                    Evidence evidence = new Evidence(Integer.parseInt(arrayList[0]), arrayList[1], arrayList[2],
+                    User user = new User(Integer.parseInt(arrayList[0]), arrayList[1], arrayList[2],
                             arrayList[3], arrayList[4], arrayList[5]);
-                    evidenceService.addEvidence(evidence);
+                    evidenceService.addEvidence(user);
                 }
                 counter++;
             }
@@ -49,12 +48,12 @@ public class EvidenceController {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
-    @GetMapping("/evidences")
+    @GetMapping("/users")
     @ResponseBody
-    public List<Evidence> getEvidence(){
-        return evidenceService.getEvidence();
+    public List<User> getUsers(){
+        return userService.getUsers();
     }
 
 }

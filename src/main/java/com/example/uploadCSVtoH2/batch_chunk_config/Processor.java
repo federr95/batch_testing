@@ -1,11 +1,11 @@
 package com.example.uploadCSVtoH2.batch_chunk_config;
 
-import com.example.uploadCSVtoH2.entity.Evidence;
+import com.example.uploadCSVtoH2.entity.User;
 import org.springframework.batch.item.ItemProcessor;
 
-public class Processor implements ItemProcessor<Evidence, Evidence> {
+public class Processor implements ItemProcessor<User, User> {
 
-    public Evidence process(Evidence evidence) {
-        return evidence;
+    public User process(User user) {
+        return user;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.uploadCSVtoH2.simple_read_config;
+/*package com.example.uploadCSVtoH2.simple_read_config;
 
 import com.example.uploadCSVtoH2.simple_read.SimpleRead;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,3 +19,4 @@ public class SimpleReadConfig {
     }
 
 }
+*/

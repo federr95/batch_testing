@@ -171,9 +171,9 @@ attributi dell’oggetto scelto
 ```java
     @Override
     public Evidence mapFieldSet(FieldSet fieldSet) {
-        final Evidence evidence = new Evidence();
-        evidence.setId(Integer.parseInt(fieldSet.readString("id")));
-        evidence.setFirst_name(fieldSet.readString("first_name"));
+        final Evidence user = new Evidence();
+        user.setId(Integer.parseInt(fieldSet.readString("id")));
+        user.setFirst_name(fieldSet.readString("first_name"));
         ...
     }
 ```    
@@ -193,7 +193,7 @@ Per il controllo dell’effettivo inserimento dei dati si può accedere alla con
     public JdbcBatchItemWriter<Evidence> evidenceItemWriter(final DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<Evidence>()
             .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-            .sql("INSERT INTO evidence (id, first_name, last_name, email, gender, ip_address) VALUES (:id, :first_name, :last_name, :email, :gender, :ip_address)")
+            .sql("INSERT INTO user (id, first_name, last_name, email, gender, ip_address) VALUES (:id, :first_name, :last_name, :email, :gender, :ip_address)")
             .dataSource(dataSource)
             .build();
     }`
@@ -218,9 +218,9 @@ Per comparare l'efficacia della libreria Batch utilizzo una semplice lettura da 
             while ((line = br.readLine()) != null) {
                 if (counter != 0) {
                     String[] arrayList = line.split(",");
-                    Evidence evidence = new Evidence(Integer.parseInt(arrayList[0]), arrayList[1], arrayList[2],
+                    Evidence user = new Evidence(Integer.parseInt(arrayList[0]), arrayList[1], arrayList[2],
                             arrayList[3], arrayList[4], arrayList[5]);
-                    evidenceRepository.save(evidence);
+                    evidenceRepository.save(user);
                 }
                 counter++;
             }
