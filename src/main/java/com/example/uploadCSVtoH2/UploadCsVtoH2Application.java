@@ -72,39 +72,44 @@ public class UploadCsVtoH2Application {
 		SpringApplication.run(UploadCsVtoH2Application.class, args);
 	}
 
-	// ENCRYPTION (all file inside resources' folder)
+	// ENCRYPTION this fase could be exploited in the archive part (la classe resources legge direttamente dalle risorse
+	// mentre quando si crea un nuovo file bisogna dare il path a partire da src !?
 	/*@Bean
-	public void encryptionFolder() throws NoSuchAlgorithmException, IOException {
+	public void encryptionFolder() throws IOException {
 		String secret = "PASSWORD";
-		List<File> filesInFolder = Files.walk(Paths.get("C:/Users/feder/Downloads/batch_testing/src/main/resources"))
-				.filter(x -> Files.isRegularFile(x.getFileName()))
+		List<File> filesInFolder = Files.walk(Paths.get("C:/Users/feder/Downloads/batch_testing_v0.2/src/main/resources/files_to_be_encrypted"))
 				.map(x -> x.toFile())
+				.filter(x -> x.getName().endsWith(".csv"))
 				.collect(Collectors.toList());
-		for(File file : filesInFolder){
-			System.out.println(file.getName());
+		for(File file : filesInFolder) {
+			try {
+				String path = "files_to_be_encrypted/";
+				String path2 = "src/main/resources/encrypted_files/";
+				String plainFileName = path + file.getName();
+				String encryptedFileName = path2 + file.getName() + ".encrypted";
+				Resource resource = new ClassPathResource(plainFileName);
+				File plainFile = resource.getFile();
+				File encryptedFile = new File(encryptedFileName);
+				FileInputStream inputStream = new FileInputStream(plainFile);
+				FileOutputStream outputStream = new FileOutputStream(encryptedFile);
+				PasswordAESCryptoUtils passAESCryptoUtils = new PasswordAESCryptoUtils(secret);
+				encrypt("PASSWORD", inputStream, outputStream,Base64.getDecoder().decode(ivString),
+						Base64.getDecoder().decode(saltString));
+				//encrypt("PASSWORD", inputStream, outputStream, passAESCryptoUtils.getIV(),
+				//	passAESCryptoUtils.getSALT());
+				//encrypt("PASSWORD", inputStream, outputStream, passAESCryptoUtils.getIvString().getBytes(StandardCharsets.US_ASCII),
+				//		passAESCryptoUtils.getSaltString().getBytes(StandardCharsets.US_ASCII));
+				System.out.println("file " + file.getName() + " has been encrypted!");
+			} catch (IOException | NoSuchAlgorithmException exception) {
+				throw new IncorrectPasswordException();
+			}
 		}
-		long fileCheck = filesInFolder.stream()
-				.filter(x -> x.getName().equals("fake_csv_1000000.encrypted"))
-				.count();
-		if(fileCheck == 0){
-			Resource resource = new ClassPathResource("fake_csv_1000000.csv");
-			File inputFile = resource.getFile();
-			String fileName = "src/main/resources/fake_csv_1000000.encrypted";
-			File encryptedFile = new File(fileName);
-			FileInputStream inputStream = new FileInputStream(inputFile);
-			FileOutputStream outputStream = new FileOutputStream(encryptedFile);
-			PasswordAESCryptoUtils passAESCryptoUtils = new PasswordAESCryptoUtils(secret);
-			encrypt("PASSWORD", inputStream, outputStream, passAESCryptoUtils.getIV(), passAESCryptoUtils.getSALT());
-			/*encrypt("PASSWORD", inputStream, outputStream, passAESCryptoUtils.getIvString().getBytes(StandardCharsets.US_ASCII),
-						passAESCryptoUtils.getSaltString().getBytes(StandardCharsets.US_ASCII));*/
-		/*} else {
-			System.out.println("File already encrypted");
-		}
+
 	}*/
 
 	// DECRYPTION
 	@Bean
-	public void decryptionFolder() throws NoSuchAlgorithmException, InvalidKeySpecException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException, IOException {
+	public void decryptionFolder() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 
 		String secret = "";
 		boolean check = false;
@@ -124,7 +129,7 @@ public class UploadCsVtoH2Application {
 
 		System.out.println("processing...");
 
-		List<File> filesInFolder = Files.walk(Paths.get("C:/Users/feder/Downloads/batch_testing/src/main/resources/encrypted_files"))
+		List<File> filesInFolder = Files.walk(Paths.get("C:/Users/feder/Downloads/batch_testing_v0.2/src/main/resources/encrypted_files"))
 				.map(x -> x.toFile())
 				.filter(x -> x.getName().endsWith(".encrypted"))
 				.collect(Collectors.toList());
@@ -133,7 +138,14 @@ public class UploadCsVtoH2Application {
 			try {
 				String path = "encrypted_files/";
 				String path2 = "src/main/resources/decrypted_files/";
-				String decryptedFileName = path2 + "evidenceDecrypted" + count + ".csv";
+				String tmp = path2 + file.getName();
+				// capire perchè non andasse
+				//String decryptedFileName= tmp.split(".")[0];
+				String[] tmp2 = tmp.split("\\.");
+				//for(String string : tmp2)
+				//	System.out.println(string);
+				String decryptedFileName = tmp2[0] + "." + tmp2[1];
+				//System.out.println(decryptedFileName);
 				String encryptedFileName = path + file.getName();
 				Resource resource = new ClassPathResource(encryptedFileName);
 				File encryptedFile = resource.getFile();
@@ -144,7 +156,7 @@ public class UploadCsVtoH2Application {
 						Base64.getDecoder().decode(saltString));
 				inputStream.close();
 				outputStream.close();
-				System.out.println("file evidence" + count + " is decrypted!");
+				System.out.println("file " + file.getName() + " has been decrypted!");
 				count++;
 			} catch (IllegalBlockSizeException | BadPaddingException | IOException | InvalidAlgorithmParameterException
 				| InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException exception) {
@@ -154,9 +166,9 @@ public class UploadCsVtoH2Application {
 
 		System.out.println("decryption is terminate..." + "\nstart to load elements into H2");
 
-		/*JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
-				.toJobParameters();
-		jobLauncher.run(loadEvidenceJob, jobParameters);*/
+		//JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
+		//		.toJobParameters();
+		//jobLauncher.run(loadEvidenceJob, jobParameters);
 	}
 
 

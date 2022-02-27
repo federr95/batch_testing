@@ -67,7 +67,7 @@ public class AES_256_CBC_OpenSSL {
             IOUtils.copy(cipherStream, outputStream);
             outputStream.close();
             inputStream.close();
-            System.out.println("iv: " + Base64.getEncoder().encodeToString(iv) + " sale: " + Base64.getEncoder().encodeToString(salt));
+            //System.out.println("iv: " + Base64.getEncoder().encodeToString(iv) + " sale: " + Base64.getEncoder().encodeToString(salt));
         } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeyException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
